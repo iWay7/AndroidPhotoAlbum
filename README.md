@@ -5,8 +5,7 @@ Android 相册。
 
 ![image](https://github.com/iWay7/AndroidPhotoAlbum/blob/master/sample.gif)   
 
-#### 添加依赖：
-##### 本示例基于 BitmapCache 框架，参考 https://github.com/iWay7/AndroidBitmapCache 添加依赖。
+#### 本示例基于 AndroidHelpers/ImageViewer 库，访问 https://github.com/iWay7/AndroidImageViewer 添加依赖。
 
 #### 使用方法：
 ##### 首先创建一个 ViewPager 的适配器：
