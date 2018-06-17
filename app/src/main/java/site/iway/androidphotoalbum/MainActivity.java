@@ -10,10 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import site.iway.androidhelpers.BitmapCache;
-import site.iway.androidhelpers.BitmapInfo;
-import site.iway.androidhelpers.BitmapInfoListener;
+import site.iway.androidhelpers.BitmapCallback;
+import site.iway.androidhelpers.BitmapRequest;
 import site.iway.androidhelpers.BitmapSource;
-import site.iway.androidhelpers.BitmapSourceURL;
 import site.iway.androidhelpers.ImageViewer;
 import site.iway.androidhelpers.PhotoAlbum;
 
@@ -40,23 +39,23 @@ public class MainActivity extends Activity {
             final ImageViewer imageViewer = new ImageViewer(MainActivity.this);
             imageViewer.setMultiSamplingEnabled(true);
             imageViewer.setTag(position);
-            BitmapSource source = new BitmapSourceURL("http://home.iway.site:8888/test/images/image%20(" + (position + 1) + ").jpg");
-            BitmapInfoListener listener = new BitmapInfoListener() {
+            String imageUrl = "http://home.iway.site:8888/test/images/image%20(" + (position + 1) + ").jpg";
+            BitmapSource source = new BitmapSource(BitmapSource.TYPE_URL, imageUrl, null);
+            BitmapRequest request = new BitmapRequest(source, new BitmapCallback() {
                 @Override
-                public void onBitmapInfoChange(BitmapInfo bitmapInfo) {
-                    int progress = bitmapInfo.getProgress();
-                    if (progress == BitmapInfo.GET_BITMAP) {
-                        bitmapInfo.lockBitmap();
-                        Bitmap bitmap = bitmapInfo.getBitmap();
+                public void onBitmapLoadProgressChange(BitmapRequest bitmapRequest) {
+                    int progress = bitmapRequest.getProgress();
+                    if (progress == BitmapRequest.GET_BITMAP) {
+                        BitmapSource source = bitmapRequest.getSource();
+                        Bitmap bitmap = BitmapCache.get(source);
                         if (bitmap != null) {
                             Bitmap copiedBitmap = Bitmap.createBitmap(bitmap);
                             imageViewer.setBitmap(copiedBitmap);
                         }
-                        bitmapInfo.unlockBitmap();
                     }
                 }
-            };
-            BitmapCache.get(source, listener);
+            });
+            BitmapCache.requestNow(request);
             container.addView(imageViewer);
             return imageViewer;
         }
